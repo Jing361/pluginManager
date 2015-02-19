@@ -12,22 +12,19 @@ extern "C" {
 
 typedef PF_byte_t unsigned char;
  
-typedef enum PF_Language
-{
+typedef enum PF_Language{
   PF_Language_C,
   PF_Language_CPP
 } PF_Language;
   
 struct PF_PlatformServices;
  
-typedef struct PF_ObjectParams
-{
+typedef struct PF_ObjectParams{
   const PF_byte_t * objectType;
   const struct PF_PlatformServices_ * platformServices;
 } PF_ObjectParams;
  
-typedef struct PF_PluginAPI_Version
-{
+typedef struct PF_PluginAPI_Version{
   unsigned int major;
   unsigned int minor;
 } PF_PluginAPI_Version;
@@ -36,8 +33,7 @@ typedef struct PF_PluginAPI_Version
 typedef void * (*PF_CreateFunc)(PF_ObjectParams *);
 typedef unsigned int (*PF_DestroyFunc)(void *);
  
-typedef struct PF_RegisterParams
-{
+typedef struct PF_RegisterParams{
   PF_PluginAPI_Version version;
   PF_CreateFunc createFunc;
   PF_DestroyFunc destroyFunc;
@@ -48,8 +44,7 @@ typedef struct PF_RegisterParams
 typedef unsigned int (*PF_RegisterFunc)(const PF_byte_t * nodeType, const PF_RegisterParams * params);
 typedef unsigned int (*PF_InvokeServiceFunc)(const PF_byte_t * serviceName, void * serviceParams);
 
-typedef struct PF_PlatformServices
-{
+typedef struct PF_PlatformServices{
   PF_PluginAPI_Version version;
   PF_RegisterFunc registerObject;
   PF_InvokeServiceFunc invokeService;

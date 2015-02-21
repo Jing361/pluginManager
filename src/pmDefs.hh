@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-typedef PF_byte_t unsigned char;
+typedef unsigned char PF_byte_t;
  
 typedef enum PF_Language{
   PF_Language_C,
@@ -37,7 +37,7 @@ typedef struct PF_RegisterParams{
   PF_PluginAPI_Version version;
   PF_CreateFunc createFunc;
   PF_DestroyFunc destroyFunc;
-  PF_ProgrammingLanguage programmingLanguage;
+  PF_Language programmingLanguage;
 } PF_RegisterParams;
  
 //registerfunc implemented by manager

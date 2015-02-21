@@ -4,6 +4,8 @@
 #include"plugin.hh"
 
 class helloPlugin:plugin{
+public:
+  void run();
 };
 
 #endif

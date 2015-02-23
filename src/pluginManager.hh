@@ -7,6 +7,8 @@
 #include"pmDefs.hh"
 #include"plugin.hh"
 
+class plugin;
+
 class pluginManager{
 private:
   std::vector<plugin> vplugin;
@@ -15,6 +17,7 @@ public:
   pluginManager();
   pluginManager(char* dir);
   pluginManager(std::string dir);
+  void registerPlug(plugin& plug);
 };
 
 #endif

@@ -6,7 +6,6 @@ using std::cerr;
 using std::endl;
 
 int main(int argc, char** argv){
-//  pluginManager pm = new pluginManager;
   void* handle;
   typedef plugin*(*create_t)();
   typedef void(*delete_t)(plugin*);

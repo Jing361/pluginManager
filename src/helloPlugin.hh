@@ -5,6 +5,8 @@
 
 class helloPlugin:public plugin{
 public:
+  helloPlugin();
+  helloPlugin(pluginManager& pm);
   void run();
 };
 

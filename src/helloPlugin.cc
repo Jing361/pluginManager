@@ -9,6 +9,13 @@ plugin* create(){
 void destroy(plugin* pi){
   delete pi;
 }
+
+}
+
+helloPlugin::helloPlugin(){
+}
+
+helloPlugin::helloPlugin(pluginManager& pm){
 }
 
 void helloPlugin::run(){

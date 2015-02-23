@@ -7,6 +7,9 @@ name:=main
 
 default:main
 
+pluginManager.o:pluginManager.cc
+	$(CC) $(cflags) $(flags) pluginManager.cc
+
 libHelloPlugin.so:helloPlugin.o
 	$(CC) -shared -o libHelloPlugin.so helloPlugin.o
 
@@ -20,8 +23,8 @@ helloPlugin.o:helloPlugin.cc
 #$(CC) -L. main.o -o $(name) -lHelloPlugin
 #or use rpath as:
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
-main:main.o libHelloPlugin.so
-	$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin -ldl
+main:main.o libHelloPlugin.so pluginManager.o
+	$(CC) -L. -Wl,-rpath=$(PWD) main.o pluginManager.o -o $(name) -lHelloPlugin -ldl
 
 main.o:main.cc
 	$(CC) $(cflags) $(flags) main.cc

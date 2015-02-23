@@ -4,10 +4,12 @@
 #include"pmDefs.hh"
 
 class plugin{
-private:
+protected:
   PF_PluginAPI_Version version;
 public:
-  virtual void run();
+  //Must have empty brackets for it to compile.
+  virtual void run(){  }
+  virtual ~plugin(){  }
 };
 
 #endif

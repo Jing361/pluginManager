@@ -3,7 +3,7 @@
 
 #include"plugin.hh"
 
-class helloPlugin:plugin{
+class helloPlugin:public plugin{
 public:
   void run();
 };

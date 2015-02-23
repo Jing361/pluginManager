@@ -1,5 +1,5 @@
 CC:=g++
-flags:=-Wall -std=c++11 -fPIC
+flags:=-Wall -std=c++11
 dflags:=-ggdb3
 cflags:=-c
 
@@ -21,7 +21,7 @@ helloPlugin.o:helloPlugin.cc
 #or use rpath as:
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
 main:main.o libHelloPlugin.so
-	$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
+	$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin -ldl
 
 main.o:main.cc
 	$(CC) $(cflags) $(flags) main.cc

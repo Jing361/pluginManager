@@ -6,6 +6,8 @@
 class plugin{
 private:
   PF_PluginAPI_Version version;
+public:
+  virtual void run();
 };
 
 #endif

@@ -8,19 +8,24 @@ name:=main
 default:main
 
 libHelloPlugin.so:helloPlugin.o
-	$(CC) -shared -fPIC -Wl,-soname,libHelloPlugin.so.1 -o libHelloPlugin.so.1.0 helloPlugin.o -lc
-	sudo ln -sf /usr/lib/libctest.so.1.0 /usr/lib/libctest.so.1
-	sudo ln -sf /usr/lib/libctest.so.1.0 /usr/lib/libctest.so
+	$(CC) -shared -o libHelloPlugin.so helloPlugin.o
 
 helloPlugin.o:helloPlugin.cc
-	$(CC) $(cflags) $(flags) helloPlugin.cc
+	$(CC) $(cflags) $(flags) -fPIC helloPlugin.cc
 
+#you either need to use-
+#need to export as:
+#export LD_LIBRARY_PATH=$(PWD):$(LD_LIBRARY_PATH)
+#and use compiling as:
+#$(CC) -L. main.o -o $(name) -lHelloPlugin
+#or use rpath as:
+#$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
 main:main.o libHelloPlugin.so
-	$(CC) main.o -o $(name) -I. -L. -lHelloPlugin
+	$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
 
 main.o:main.cc
 	$(CC) $(cflags) $(flags) main.cc
 
 clean:
-	rm *.a *.o core $(name)
+	rm *.so *.o core $(name)
 

@@ -1,6 +1,7 @@
 #ifndef __PLUGINMANAGER_H__
 #define __PLUGINMANAGER_H__
 
+#include<map>
 #include<vector>
 #include<string>
 #include<iostream>
@@ -12,16 +13,18 @@ class plugin;
 
 typedef plugin*(*create_t)();
 typedef void(*delete_t)(plugin*);
+typedef char*(*name_t)();
 
 class pluginWrapper{
 public:
   create_t create;
   delete_t del;
+  std::string name;
 };
 
 class pluginManager{
 private:
-  std::vector<pluginWrapper> vplugin;
+  std::map<std::string, pluginWrapper> mplugin;
 public:
   pluginManager();
   void registerPlug(char* plug);

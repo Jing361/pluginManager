@@ -26,9 +26,15 @@ void pluginManager::registerPlug(char* plug){
     std::cerr << error << std::endl;
     return;
   }
+  name_t nam = (name_t)dlsym(handle, "name");
+  if((error = dlerror()) != 0){
+    std::cerr << error << std::endl;
+    return;
+  }
+  wrap.name = (*nam)();
   //It is possible we want to close the handle later on around manager destruction
   dlclose(handle);
 
-  vplugin.push_back(wrap);
+  mplugin.insert(std::pair<std::string, pluginWrapper>(wrap.name, wrap));
 }
 

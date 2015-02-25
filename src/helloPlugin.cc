@@ -10,6 +10,10 @@ void destroy(plugin* pi){
   delete pi;
 }
 
+char* name(){
+  return "hello";
+}
+
 }
 
 helloPlugin::helloPlugin(){

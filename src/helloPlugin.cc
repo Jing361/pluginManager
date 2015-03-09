@@ -10,7 +10,7 @@ void destroy(plugin* pi){
   delete pi;
 }
 
-char* name(){
+const char* name(){
   return "hello";
 }
 

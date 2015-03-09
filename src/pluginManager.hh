@@ -2,9 +2,7 @@
 #define __PLUGINMANAGER_H__
 
 #include<map>
-#include<vector>
 #include<string>
-#include<iostream>
 #include<dlfcn.h>
 #include"pmDefs.hh"
 #include"plugin.hh"
@@ -27,8 +25,10 @@ private:
   std::map<std::string, pluginWrapper> mplugin;
 public:
   pluginManager();
-  void registerPlug(char* plug);
+  void registerPlug(const char* plug);
   void registerPlug(std::string plug);
+  pluginWrapper& getPlugin(char* plugName);
+  pluginWrapper& getPlugin(std::string plugName);
 };
 
 #endif

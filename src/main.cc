@@ -1,41 +1,23 @@
 #include<dlfcn.h>
 #include<iostream>
+#include<string>
+#include"pluginManager.hh"
 #include"plugin.hh"
 
 using std::cerr;
 using std::endl;
 
 int main(int argc, char** argv){
-  void* handle;
-  typedef plugin*(*create_t)();
-  typedef void(*delete_t)(plugin*);
-  create_t create;
-  delete_t del;
-  char* error;
+  pluginManager pm;
+  plugin* hello;
 
-  handle = dlopen("./libHelloPlugin.so", RTLD_LAZY);
-  if(!handle){
-    cerr << dlerror() << endl;
-    return 1;
-  }
+  pm.registerPlug(std::string("./libHelloPlugin.so"));
+  pluginWrapper wrap = pm.getPlugin(std::string("hello"));
 
-  create = (create_t)dlsym(handle, "create");
-  if((error = dlerror()) != 0){
-    cerr << error << endl;
-    return 1;
-  }
-  del = (delete_t)dlsym(handle, "destroy");
-  if((error = dlerror()) != 0){
-    cerr << error << endl;
-    return 0;
-  }
+  hello = (*wrap.create)();
+  hello->run();
 
-  plugin *pi;
-  pi = (*create)();
-  pi->run();
-
-  (*del)(pi);
-  dlclose(handle);
+  wrap.del(hello);
   return 0;
 }
 

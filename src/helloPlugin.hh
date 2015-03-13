@@ -1,13 +1,15 @@
-#ifndef __HELLOPLUGIN_H__
-#define __HELLOPLUGIN_H__
+#ifndef __HELLO_PLUGIN_H__
+#define __HELLO_PLUGIN_H__
 
 #include"plugin.hh"
+#include"hello.hh"
 
 class helloPlugin:public plugin{
 public:
   helloPlugin();
   helloPlugin(pluginManager& pm);
-  void run();
+  virtual ~helloPlugin();
+  virtual void run();
 };
 
 #endif

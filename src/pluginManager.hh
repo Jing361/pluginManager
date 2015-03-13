@@ -1,34 +1,23 @@
-#ifndef __PLUGINMANAGER_H__
-#define __PLUGINMANAGER_H__
+#ifndef __PLUGIN_MANAGER_H__
+#define __PLUGIN_MANAGER_H__
 
 #include<map>
-#include<string>
+#include<vector>
+#include<iostream>
 #include<dlfcn.h>
 #include"pmDefs.hh"
-#include"plugin.hh"
-
-class plugin;
-
-typedef plugin*(*create_t)();
-typedef void(*delete_t)(plugin*);
-typedef char*(*name_t)();
-
-class pluginWrapper{
-public:
-  create_t create;
-  delete_t del;
-  std::string name;
-};
 
 class pluginManager{
 private:
-  std::map<std::string, pluginWrapper> mplugin;
+  std::map<std::string, pluginWrapper> mapWrapper;
+  std::vector<void*> handles;
 public:
   pluginManager();
-  void registerPlug(const char* plug);
-  void registerPlug(std::string plug);
-  pluginWrapper& getPlugin(char* plugName);
-  pluginWrapper& getPlugin(std::string plugName);
+  virtual ~pluginManager();
+  void load(const char* dir);
+  void load(std::string dir);
+  static unsigned int registerObject(const byte_t* name, const registerParams* rp);
+  void* createObject(const byte_t* name);
 };
 
 #endif

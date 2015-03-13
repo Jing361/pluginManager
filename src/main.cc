@@ -1,23 +1,17 @@
-#include<dlfcn.h>
-#include<iostream>
 #include<string>
+#include<iostream>
 #include"pluginManager.hh"
-#include"plugin.hh"
-
-using std::cerr;
-using std::endl;
+#include"actor.hh"
 
 int main(int argc, char** argv){
+std::cout << "Running!" << std::endl;
   pluginManager pm;
-  plugin* hello;
+  actor* actr;
 
-  pm.registerPlug(std::string("./libHelloPlugin.so"));
-  pluginWrapper wrap = pm.getPlugin(std::string("hello"));
-
-  hello = (*wrap.create)();
-  hello->run();
-
-  wrap.del(hello);
+  pm.load("libHelloPlugin.so");
+  actr = (actor*)pm.createObject((const byte_t*)"killerBunny");
+  actr->run();
+std::cout << "Closing!" << std::endl;
   return 0;
 }
 

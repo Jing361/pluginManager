@@ -1,49 +1,60 @@
-#include"pluginManager.hh"
+#include<string>
 #include<iostream>
+#include"pluginManager.hh"
 
 pluginManager::pluginManager(){
 }
 
-void pluginManager::registerPlug(std::string plug){
-  this->registerPlug(plug.c_str());
+pluginManager::~pluginManager(){
+  for(auto iter = this->handles.begin(); iter != this->handles.end(); ++iter){
+    dlclose(*iter);
+  }
 }
 
-void pluginManager::registerPlug(const char* plug){
-  void* handle = dlopen(plug, RTLD_LAZY);
+void pluginManager::load(const char* dir){
+  //TODO:check existence of path and file.
+  pluginWrapper wrapper;
+  platformServices services;
   char* error;
-  pluginWrapper wrap;
+  //TODO:should use rtld_nodelete if libc is ever updated
+  //void* handle = dlopen(dir, RTLD_NODELETE);
+  //until then dlclose must be done somewhere else.
+  void* handle = dlopen(dir, RTLD_LAZY);
+
+  services.version.major = 0;
+  services.version.minor = 1;
+  services.registerObject = pluginManager::registerObject;
 
   if(!handle){
+    std::cerr << "Failed to open " << dir << std::endl;
     std::cerr << dlerror() << std::endl;
     return;
   }
-  wrap.create = (create_t)dlsym(handle, "create");
+
+  initFunc_t init = (initFunc_t)dlsym(handle, "initFunc");
   if((error = dlerror()) != 0){
     std::cerr << error << std::endl;
     return;
   }
-  wrap.del = (delete_t)dlsym(handle, "destroy");
-  if((error = dlerror()) != 0){
-    std::cerr << error << std::endl;
-    return;
-  }
-  name_t nam = (name_t)dlsym(handle, "name");
-  if((error = dlerror()) != 0){
-    std::cerr << error << std::endl;
-    return;
-  }
-  wrap.name = (*nam)();
+
+  init(&services);
+
   //It is possible we want to close the handle later on around manager destruction
   dlclose(handle);
+  //handles.push_back(handle);
 
-  mplugin.insert(std::pair<std::string, pluginWrapper>(wrap.name, wrap));
+  this->mapWrapper.insert(std::pair<std::string, pluginWrapper>(wrapper.name, wrapper));
 }
 
-pluginWrapper& pluginManager::getPlugin(char* plugName){
-  return this->getPlugin(std::string(plugName));
+void pluginManager::load(std::string dir){
+  this->load(dir.c_str());
 }
 
-pluginWrapper& pluginManager::getPlugin(std::string plugName){
-  return this->mplugin[plugName];
+unsigned int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
+  return 0;
+}
+
+void* pluginManager::createObject(const byte_t* name){
+  return new std::string("hi!");
 }
 

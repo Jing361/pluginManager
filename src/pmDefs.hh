@@ -1,74 +1,50 @@
 #ifndef __PMDEFS_H__
 #define __PMDEFS_H__
-//This file is taken from:
-//http://www.drdobbs.com/cpp/building-your-own-plugin-framework-part/204202899?pgno=3
-//And is the basis for my design of the manager.
 
-//PF in this file stands for plugin framework
- 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include"plugin.hh"
 
-typedef unsigned char PF_byte_t;
- 
-typedef enum PF_Language{
-  PF_Language_C,
-  PF_Language_CPP
-} PF_Language;
-  
-struct PF_PlatformServices;
- 
-typedef struct PF_ObjectParams{
-  const PF_byte_t * objectType;
-  const struct PF_PlatformServices_ * platformServices;
-} PF_ObjectParams;
- 
-typedef struct PF_PluginAPI_Version{
+class plugin;
+
+//TODO:come up with prefix to use with all these types
+//       to make it clearer they come from this framework
+typedef unsigned char byte_t;
+
+typedef void*(*create_t)();
+typedef void(*delete_t)(void*);
+typedef char*(*name_t)();
+
+typedef struct{
   unsigned int major;
   unsigned int minor;
-} PF_PluginAPI_Version;
- 
-//Create and destroy implemented by plugin
-typedef void * (*PF_CreateFunc)(PF_ObjectParams *);
-typedef unsigned int (*PF_DestroyFunc)(void *);
- 
-typedef struct PF_RegisterParams{
-  PF_PluginAPI_Version version;
-  PF_CreateFunc createFunc;
-  PF_DestroyFunc destroyFunc;
-  PF_Language programmingLanguage;
-} PF_RegisterParams;
- 
-//registerfunc implemented by manager
-typedef unsigned int (*PF_RegisterFunc)(const PF_byte_t * nodeType, const PF_RegisterParams * params);
-typedef unsigned int (*PF_InvokeServiceFunc)(const PF_byte_t * serviceName, void * serviceParams);
+}version_t;
 
-typedef struct PF_PlatformServices{
-  PF_PluginAPI_Version version;
-  PF_RegisterFunc registerObject;
-  PF_InvokeServiceFunc invokeService;
-} PF_PlatformServices;
- 
-//init and exit implemented by plugin
-typedef unsigned int (*PF_ExitFunc)();
-typedef PF_ExitFunc (*PF_InitFunc)(const PF_PlatformServices *);
- 
-#ifndef PLUGIN_API
-  #ifdef WIN32
-    #define PLUGIN_API __declspec(dllimport)
-  #else
-    #define PLUGIN_API
-  #endif
+typedef struct{
+  version_t version;
+  create_t create;
+  delete_t del;
+  std::string name;
+}pluginWrapper;
+
+//Provided by plugin to register object.
+typedef struct{
+  version_t version;
+  create_t create;
+  delete_t destroy;
+}registerParams;
+
+typedef unsigned int (*registerFunc)(const byte_t* nodeType, const registerParams* params);
+
+//Things provided by manager.
+//Including:
+//  the managers version, to ensure version compatability
+//  method for plugin to register objects
+typedef struct{
+  version_t version;
+  registerFunc registerObject;
+}platformServices;
+
+//Manager calls the initFunc of a plugin, from which the plugin registers objects.
+typedef void (*initFunc_t)(const platformServices*);
+
 #endif
- 
-extern
-#ifdef  __cplusplus
-"C"
-#endif
-PLUGIN_API PF_ExitFunc PF_initPlugin(const PF_PlatformServices * params);
- 
-#ifdef  __cplusplus
-}
-#endif
-#endif /* PM_PLUGIN_H */
+

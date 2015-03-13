@@ -8,10 +8,8 @@
 #include"pmDefs.hh"
 
 class pluginManager{
-private:
-  std::map<std::string, pluginWrapper> mapWrapper;
-  std::vector<void*> handles;
 public:
+  static std::map<std::string, const registerParams*> objMap;
   pluginManager();
   virtual ~pluginManager();
   void load(const char* dir);

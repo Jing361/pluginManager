@@ -9,7 +9,6 @@ public:
   helloPlugin();
   helloPlugin(pluginManager& pm);
   virtual ~helloPlugin();
-  virtual void run();
 };
 
 #endif

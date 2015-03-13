@@ -2,18 +2,19 @@
 #include<iostream>
 #include"pluginManager.hh"
 
+std::map<std::string, const registerParams*> pluginManager::objMap;
+
 pluginManager::pluginManager(){
 }
 
 pluginManager::~pluginManager(){
-  for(auto iter = this->handles.begin(); iter != this->handles.end(); ++iter){
-    dlclose(*iter);
-  }
+//  for(auto iter = this->handles.begin(); iter != this->handles.end(); ++iter){
+//    dlclose(*iter);
+//  }
 }
 
 void pluginManager::load(const char* dir){
   //TODO:check existence of path and file.
-  pluginWrapper wrapper;
   platformServices services;
   char* error;
   //TODO:should use rtld_nodelete if libc is ever updated
@@ -40,10 +41,7 @@ void pluginManager::load(const char* dir){
   init(&services);
 
   //It is possible we want to close the handle later on around manager destruction
-  dlclose(handle);
-  //handles.push_back(handle);
-
-  this->mapWrapper.insert(std::pair<std::string, pluginWrapper>(wrapper.name, wrapper));
+  //dlclose(handle);
 }
 
 void pluginManager::load(std::string dir){
@@ -51,10 +49,21 @@ void pluginManager::load(std::string dir){
 }
 
 unsigned int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
+std::cout << "registerObject" << std::endl;
+  pluginManager::objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
+std::cout << name << std::endl;
+std::cout << pluginManager::objMap[(const char*)name] << std::endl;
   return 0;
 }
 
 void* pluginManager::createObject(const byte_t* name){
-  return new std::string("hi!");
+std::cout << "createObject" << std::endl;
+std::cout << name << std::endl;
+std::cout << pluginManager::objMap[(const char*)name] << std::endl;
+  const registerParams* rp = pluginManager::objMap[(const char*)name];
+std::cout << rp << std::endl;
+  create_t cr = (create_t)rp->create;
+std::cout << cr << std::endl;
+  return cr();
 }
 

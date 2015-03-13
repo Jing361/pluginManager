@@ -18,6 +18,7 @@ typedef struct{
   unsigned int minor;
 }version_t;
 
+//I'm not confident in the difference between pluginwrapper and registerparams right now.
 typedef struct{
   version_t version;
   create_t create;

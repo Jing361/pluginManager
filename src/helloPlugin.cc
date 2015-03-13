@@ -12,7 +12,7 @@ void initFunc(const platformServices* services){
   rp.create = hello::create;
   rp.destroy = hello::destroy;
 
-  services->registerObject((const byte_t*)"helloBunny", &rp);
+  services->registerObject((const byte_t*)"killerBunny", &rp);
 }
 
 }
@@ -22,8 +22,4 @@ helloPlugin::helloPlugin(){  }
 helloPlugin::helloPlugin(pluginManager& pm){  }
 
 helloPlugin::~helloPlugin(){  }
-
-void helloPlugin::run(){
-  std::cout << "hello!!" << std::endl;
-}
 

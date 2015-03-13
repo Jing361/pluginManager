@@ -10,7 +10,6 @@ public:
   plugin(){  }
   plugin(pluginManager& pm){  }
   virtual ~plugin(){  }
-  virtual void run(){  }
 };
 
 #endif

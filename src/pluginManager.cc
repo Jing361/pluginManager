@@ -49,21 +49,13 @@ void pluginManager::load(std::string dir){
 }
 
 unsigned int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
-std::cout << "registerObject" << std::endl;
   pluginManager::objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
-std::cout << name << std::endl;
-std::cout << pluginManager::objMap[(const char*)name] << std::endl;
   return 0;
 }
 
 void* pluginManager::createObject(const byte_t* name){
-std::cout << "createObject" << std::endl;
-std::cout << name << std::endl;
-std::cout << pluginManager::objMap[(const char*)name] << std::endl;
   const registerParams* rp = pluginManager::objMap[(const char*)name];
-std::cout << rp << std::endl;
   create_t cr = (create_t)rp->create;
-std::cout << cr << std::endl;
   return cr();
 }
 

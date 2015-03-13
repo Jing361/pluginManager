@@ -34,6 +34,9 @@ main:main.o libHelloPlugin.so pluginManager.o
 main.o:main.cc
 	$(CC) $(cflags) $(flags) main.cc
 
+grind:$(name)
+	valgrind --track-origins=yes --leak-check=yes ./$(name)
+
 clean:
 	rm *.so *.o core $(name)
 

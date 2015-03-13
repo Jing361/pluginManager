@@ -2,17 +2,24 @@
 #include"helloPlugin.hh"
 #include"pmDefs.hh"
 
+#include"actor.hh"
+
 extern "C"{
 
 void initFunc(const platformServices* services){
-  registerParams rp;
+  registerParams* rp = new registerParams;
 
-  rp.version.major = 0;
-  rp.version.minor = 1;
-  rp.create = hello::create;
-  rp.destroy = hello::destroy;
+  rp->version.major = 0;
+  rp->version.minor = 1;
+  rp->create = &hello::create;
+  rp->destroy = &hello::destroy;
 
-  services->registerObject((const byte_t*)"killerBunny", &rp);
+//The below lines work.
+//  But the function pointer doesn't? so I'm confused.
+//actor* actr = (actor*)hello::create();
+//actr->run();
+
+  services->registerObject((const byte_t*)"killerBunny", rp);
 }
 
 }

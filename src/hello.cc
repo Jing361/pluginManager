@@ -13,5 +13,6 @@ void hello::destroy(void* obj){
 
 void hello::run(){
   std::cout << "I'M A BUNNY" << std::endl;
+  std::cout << "HOLY SHIT" << std::endl;
 }
 

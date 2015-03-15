@@ -16,6 +16,7 @@ typedef char*(*name_t)();
 typedef struct{
   unsigned int major;
   unsigned int minor;
+  unsigned int maint;
 }version_t;
 
 //I'm not confident in the difference between pluginwrapper and registerparams right now.

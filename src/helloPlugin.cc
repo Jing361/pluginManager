@@ -8,6 +8,7 @@ void initFunc(const platformServices* services){
 
   rp->version.major = 0;
   rp->version.minor = 1;
+  rp->version.maint = 0;
   rp->create = &hello::create;
   rp->destroy = &hello::destroy;
 

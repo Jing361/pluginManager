@@ -24,6 +24,7 @@ void pluginManager::load(const char* dir){
 
   services.version.major = 0;
   services.version.minor = 1;
+  services.version.maint = 0;
   services.registerObject = pluginManager::registerObject;
 
   if(!handle){

@@ -5,6 +5,10 @@
 std::map<std::string, const registerParams*> pluginManager::objMap;
 
 pluginManager::pluginManager(){
+  this->services.version.major = 0;
+  this->services.version.minor = 1;
+  this->services.version.maint = 0;
+  this->services.registerObject = pluginManager::registerObject;
 }
 
 pluginManager::~pluginManager(){
@@ -15,17 +19,16 @@ pluginManager::~pluginManager(){
 
 void pluginManager::load(const char* dir){
   //TODO:check existence of path and file.
-  platformServices services;
   char* error;
   //TODO:should use rtld_nodelete if libc is ever updated
   //void* handle = dlopen(dir, RTLD_NODELETE);
   //until then dlclose must be done somewhere else.
   void* handle = dlopen(dir, RTLD_LAZY);
 
-  services.version.major = 0;
-  services.version.minor = 1;
-  services.version.maint = 0;
-  services.registerObject = pluginManager::registerObject;
+  this->services.version.major = 0;
+  this->services.version.minor = 1;
+  this->services.version.maint = 0;
+  this->services.registerObject = pluginManager::registerObject;
 
   if(!handle){
     std::cerr << "Failed to open " << dir << std::endl;
@@ -39,7 +42,7 @@ void pluginManager::load(const char* dir){
     return;
   }
 
-  init(&services);
+  init(&(this->services));
 
   //It is possible we want to close the handle later on around manager destruction
   //dlclose(handle);
@@ -49,7 +52,7 @@ void pluginManager::load(std::string dir){
   this->load(dir.c_str());
 }
 
-unsigned int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
+int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
   pluginManager::objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
   return 0;
 }

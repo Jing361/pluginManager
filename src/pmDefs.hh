@@ -34,7 +34,7 @@ typedef struct{
   delete_t destroy;
 }registerParams;
 
-typedef unsigned int (*registerFunc)(const byte_t* nodeType, const registerParams* params);
+typedef int (*registerFunc)(const byte_t* nodeType, const registerParams* params);
 
 //Things provided by manager.
 //Including:

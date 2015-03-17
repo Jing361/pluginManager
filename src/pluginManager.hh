@@ -16,8 +16,8 @@ public:
   virtual ~pluginManager();
   void load(const char* dir);
   void load(std::string dir);
-  static int registerObject(const byte_t* name, const registerParams* rp);
   void* createObject(const byte_t* name);
+  static int registerObject(const byte_t* name, const registerParams* rp);
 };
 
 #endif

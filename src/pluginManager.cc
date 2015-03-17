@@ -53,6 +53,12 @@ void pluginManager::load(std::string dir){
 }
 
 int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
+//TODO:add version checking...
+//Use lambdas..?
+  //Incompatible version check.
+//  if(this->services.minor != rp.version.minor){
+//    return -1;
+//  }
   pluginManager::objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
   return 0;
 }

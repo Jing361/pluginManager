@@ -1,6 +1,7 @@
 #ifndef __PMDEFS_H__
 #define __PMDEFS_H__
 
+#include<functional>
 #include"plugin.hh"
 
 class plugin;
@@ -9,9 +10,9 @@ class plugin;
 //       to make it clearer they come from this framework
 typedef unsigned char byte_t;
 
-typedef void*(*create_t)();
-typedef void(*delete_t)(void*);
-typedef char*(*name_t)();
+typedef std::function<void*()> create_t;
+typedef std::function<void(void*)> delete_t;
+typedef std::function<char*()> name_t;
 
 typedef struct{
   unsigned int major;
@@ -34,7 +35,7 @@ typedef struct{
   delete_t destroy;
 }registerParams;
 
-typedef int (*registerFunc)(const byte_t* nodeType, const registerParams* params);
+typedef std::function<int(const byte_t*, const registerParams*)> registerFunc;
 
 //Things provided by manager.
 //Including:

@@ -2,13 +2,11 @@
 #include<iostream>
 #include"pluginManager.hh"
 
-std::map<std::string, const registerParams*> pluginManager::objMap;
-
 pluginManager::pluginManager(){
   this->services.version.major = 0;
-  this->services.version.minor = 1;
+  this->services.version.minor = 2;
   this->services.version.maint = 0;
-  this->services.registerObject = pluginManager::registerObject;
+  this->services.registerObject = [this] (const byte_t* name, const registerParams* rp)->int { return this->registerObject(name, rp); };
 }
 
 pluginManager::~pluginManager(){
@@ -24,11 +22,6 @@ void pluginManager::load(const char* dir){
   //void* handle = dlopen(dir, RTLD_NODELETE);
   //until then dlclose must be done somewhere else.
   void* handle = dlopen(dir, RTLD_LAZY);
-
-  this->services.version.major = 0;
-  this->services.version.minor = 1;
-  this->services.version.maint = 0;
-  this->services.registerObject = pluginManager::registerObject;
 
   if(!handle){
     std::cerr << "Failed to open " << dir << std::endl;
@@ -56,10 +49,10 @@ int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
 //TODO:add version checking...
 //Use lambdas..?
   //Incompatible version check.
-//  if(this->services.minor != rp.version.minor){
-//    return -1;
-//  }
-  pluginManager::objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
+  if(this->services.version.minor != rp->version.minor){
+    return -1;
+  }
+  this->objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
   return 0;
 }
 

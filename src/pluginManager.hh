@@ -10,14 +10,14 @@
 class pluginManager{
 private:
   platformServices services;
+  std::map<std::string, const registerParams*> objMap;
 public:
-  static std::map<std::string, const registerParams*> objMap;
   pluginManager();
   virtual ~pluginManager();
   void load(const char* dir);
   void load(std::string dir);
   void* createObject(const byte_t* name);
-  static int registerObject(const byte_t* name, const registerParams* rp);
+  int registerObject(const byte_t* name, const registerParams* rp);
 };
 
 #endif

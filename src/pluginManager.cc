@@ -15,34 +15,70 @@ pluginManager::~pluginManager(){
 //  }
 }
 
-void pluginManager::load(const char* dir){
+int pluginManager::load(const char* dir){
   //TODO:check existence of path and file.
-  char* error;
   //TODO:should use rtld_nodelete if libc is ever updated
   //void* handle = dlopen(dir, RTLD_NODELETE);
+  //TODO:Need to call dlclose appropriately.
   //until then dlclose must be done somewhere else.
+  //If dlclose called in this call, program dumps.
+  char* error;
   void* handle = dlopen(dir, RTLD_LAZY);
 
   if(!handle){
     std::cerr << "Failed to open " << dir << std::endl;
     std::cerr << dlerror() << std::endl;
-    return;
+    return -1;
   }
 
   initFunc_t init = (initFunc_t)dlsym(handle, "initFunc");
   if((error = dlerror()) != 0){
+    std::cerr << "Couldn't find initFunc for " << dir << std::endl;
     std::cerr << error << std::endl;
-    return;
+    return -1;
   }
 
   init(&(this->services));
 
   //It is possible we want to close the handle later on around manager destruction
   //dlclose(handle);
+  return 0;
 }
 
-void pluginManager::load(std::string dir){
-  this->load(dir.c_str());
+int pluginManager::load(std::string dir){
+  return this->load(dir.c_str());
+}
+
+int pluginManager::loadall(const char* dir){
+  return this->loadAll(std::string(dir));
+}
+
+int pluginManager::loadAll(std::string dir){
+  std::vector<std::string>* files = this->getFiles(dir);
+  int count = 0;
+
+  for(auto it = files->begin(); it != files->end(); ++it){
+    count += this->load(*it);
+  }
+  return count;
+}
+
+std::vector<std::string>* pluginManager::getFiles(std::string dir){
+  DIR *dp;
+  struct dirent *dirp;
+  std::vector<std::string>* files = new std::vector<std::string>;
+
+  if((dp  = opendir(dir.c_str())) == NULL) {
+    std::cerr << "Error(" << errno << ") opening " << dir << std::endl;
+    return 0;
+  }
+
+  while ((dirp = readdir(dp)) != NULL) {
+    files->push_back(std::string(dirp->d_name));
+  }
+
+  closedir(dp);
+  return files;
 }
 
 int pluginManager::registerObject(const byte_t* name, const registerParams* rp){

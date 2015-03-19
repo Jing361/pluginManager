@@ -11,14 +11,17 @@ default:main
 pluginManager.o:pluginManager.cc
 	$(CC) $(cflags) $(flags) pluginManager.cc
 
-libHelloPlugin.so:helloPlugin.o hello.o
-	$(CC) -shared -o libHelloPlugin.so helloPlugin.o hello.o
+libGreetPlugin.so:greetPlugin.o hello.o bye.o
+	$(CC) -shared -o stuff/libGreetPlugin.so greetPlugin.o hello.o bye.o
 
-helloPlugin.o:helloPlugin.cc
-	$(CC) $(cflags) $(flags) -fPIC helloPlugin.cc
+greetPlugin.o:greetPlugin.cc
+	$(CC) $(cflags) $(flags) -fPIC greetPlugin.cc
 
 hello.o:hello.cc
 	$(CC) $(cflags) $(flags) -fPIC hello.cc
+
+bye.o:bye.cc
+	$(CC) $(cflags) $(flags) -fPIC bye.cc
 
 #you either need to use-
 #need to export as:
@@ -27,7 +30,7 @@ hello.o:hello.cc
 #$(CC) -L. main.o -o $(name) -lHelloPlugin
 #or use rpath as:
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
-main:main.o libHelloPlugin.so pluginManager.o
+main:main.o libGreetPlugin.so pluginManager.o
 	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) main.o pluginManager.o -o $(name) -ldl
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o pluginManager.o -o $(name) -ldl
 

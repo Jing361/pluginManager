@@ -5,11 +5,15 @@
 
 int main(int argc, char** argv){
   pluginManager pm;
-  actor* actr;
+  actor* actr1;
+  actor* actr2;
 
-  pm.load("libHelloPlugin.so");
-  actr = (actor*)pm.createObject((const byte_t*)"killerBunny");
-  actr->run();
+  pm.load("stuff/libGreetPlugin.so");
+  actr1 = (actor*)pm.createObject((const byte_t*)"killerBunny");
+  actr2 = (actor*)pm.createObject((const byte_t*)"killerLGM");
+
+  actr1->run();
+  actr2->run();
   return 0;
 }
 

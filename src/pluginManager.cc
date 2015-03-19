@@ -87,9 +87,6 @@ std::vector<std::string>* pluginManager::getFiles(std::string dir){
 }
 
 int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
-//TODO:add version checking...
-//Use lambdas..?
-  //Incompatible version check.
   if(this->services.version.minor != rp->version.minor){
     return -1;
   }
@@ -101,11 +98,5 @@ void* pluginManager::createObject(const byte_t* name){
   const registerParams* rp = pluginManager::objMap[(const char*)name];
   create_t cr = (create_t)rp->create;
   return cr();
-}
-
-void pluginManager::test(){
-  for(auto it = this->objMap.begin(); it != this->objMap.end(); ++it){
-    std::cout << it->first << '\t' << it->second << std::endl;
-  }
 }
 

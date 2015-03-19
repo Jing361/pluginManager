@@ -22,6 +22,7 @@ public:
   int loadAll(std::string dir);
   void* createObject(const byte_t* name);
   int registerObject(const byte_t* name, const registerParams* rp);
+  void test();
 };
 
 #endif

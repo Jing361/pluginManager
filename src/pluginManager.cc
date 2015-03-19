@@ -98,3 +98,9 @@ void* pluginManager::createObject(const byte_t* name){
   return cr();
 }
 
+void pluginManager::test(){
+  for(auto it = this->objMap.begin(); it != this->objMap.end(); ++it){
+    std::cout << it->first << '\t' << it->second << std::endl;
+  }
+}
+

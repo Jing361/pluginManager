@@ -5,14 +5,12 @@
 #include<vector>
 #include<iostream>
 #include<dlfcn.h>
-#include<dirent.h>
 #include"pmDefs.hh"
 
 class pluginManager{
 private:
   platformServices services;
   std::map<std::string, const registerParams*> objMap;
-  std::vector<std::string>* getFiles(std::string dir);
 public:
   pluginManager();
   virtual ~pluginManager();

@@ -1,6 +1,7 @@
 #include<string>
 #include<iostream>
 #include"pluginManager.hh"
+#include"fileManager.hh"
 
 pluginManager::pluginManager(){
   this->services.version.major = 0;
@@ -54,36 +55,13 @@ int pluginManager::loadall(const char* dir){
 }
 
 int pluginManager::loadAll(std::string dir){
-  std::vector<std::string>* files = this->getFiles(dir);
+  std::vector<std::string>* files = fileManager::getFiles(dir);
   int count = 0;
 
   for(auto it = files->begin(); it != files->end(); ++it){
     count += this->load(dir + *it);
   }
   return count;
-}
-
-std::vector<std::string>* pluginManager::getFiles(std::string dir){
-  DIR *dp;
-  struct dirent *dirp;
-  std::string bad1(".");
-  std::string bad2("..");
-  std::vector<std::string>* files = new std::vector<std::string>;
-
-  if((dp  = opendir(dir.c_str())) == NULL) {
-    std::cerr << "Error(" << errno << ") opening " << dir << std::endl;
-    return 0;
-  }
-
-  while ((dirp = readdir(dp)) != NULL) {
-    std::string tmp(dirp->d_name);
-    if(tmp != bad1 && tmp!= bad2){
-      files->push_back(tmp);
-    }
-  }
-
-  closedir(dp);
-  return files;
 }
 
 int pluginManager::registerObject(const byte_t* name, const registerParams* rp){

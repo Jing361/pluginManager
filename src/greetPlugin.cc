@@ -1,4 +1,3 @@
-#include"greetPlugin.hh"
 #include"pmDefs.hh"
 #include"hello.hh"
 #include"bye.hh"
@@ -27,10 +26,4 @@ void initFunc(const platformServices* services){
 }
 
 }
-
-greetPlugin::greetPlugin(){  }
-
-greetPlugin::greetPlugin(pluginManager<actor>& pm){  }
-
-greetPlugin::~greetPlugin(){  }
 

@@ -2,7 +2,7 @@
 #define __PMDEFS_H__
 
 #include<functional>
-#include"plugin.hh"
+#include<string>
 
 //template<class T>
 //class plugin;

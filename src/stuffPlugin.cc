@@ -1,4 +1,3 @@
-#include"stuffPlugin.hh"
 #include"pmDefs.hh"
 #include"thing.hh"
 #include"stuff.hh"
@@ -27,10 +26,4 @@ void initFunc(const platformServices* services){
 }
 
 }
-
-stuffPlugin::stuffPlugin(){  }
-
-stuffPlugin::stuffPlugin(pluginManager<actor>& pm){  }
-
-stuffPlugin::~stuffPlugin(){  }
 

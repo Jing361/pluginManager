@@ -4,7 +4,7 @@
 #include"actor.hh"
 
 int main(int argc, char** argv){
-  pluginManager pm;
+  pluginManager<actor> pm;
   actor* actr1;
   actor* actr2;
   actor* actr3;

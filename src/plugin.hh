@@ -3,12 +3,14 @@
 
 #include"pluginManager.hh"
 
+template<class T>
 class pluginManager;
 
+template<class T>
 class plugin{
 public:
   plugin(){  }
-  plugin(pluginManager& pm){  }
+  plugin(pluginManager<T>& pm){  }
   virtual ~plugin(){  }
 };
 

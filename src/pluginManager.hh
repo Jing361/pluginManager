@@ -7,6 +7,7 @@
 #include<dlfcn.h>
 #include"pmDefs.hh"
 
+template<class T>
 class pluginManager{
 private:
   platformServices services;
@@ -18,9 +19,11 @@ public:
   int load(std::string dir);
   int loadall(const char* dir);
   int loadAll(std::string dir);
-  void* createObject(const byte_t* name);
+  T* createObject(const byte_t* name);
   int registerObject(const byte_t* name, const registerParams* rp);
 };
+
+#include"pluginManager.cc"
 
 #endif
 

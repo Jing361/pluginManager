@@ -1,22 +1,25 @@
 #include<string>
 #include<iostream>
-#include"pluginManager.hh"
+//#include"pluginManager.hh"
 #include"fileManager.hh"
 
-pluginManager::pluginManager(){
+template<class T>
+pluginManager<T>::pluginManager(){
   this->services.version.major = 0;
   this->services.version.minor = 2;
   this->services.version.maint = 0;
   this->services.registerObject = [this] (const byte_t* name, const registerParams* rp)->int { return this->registerObject(name, rp); };
 }
 
-pluginManager::~pluginManager(){
+template<class T>
+pluginManager<T>::~pluginManager(){
 //  for(auto iter = this->handles.begin(); iter != this->handles.end(); ++iter){
 //    dlclose(*iter);
 //  }
 }
 
-int pluginManager::load(const char* dir){
+template<class T>
+int pluginManager<T>::load(const char* dir){
   //TODO:check existence of path and file.
   //TODO:should use rtld_nodelete if libc is ever updated
   //void* handle = dlopen(dir, RTLD_NODELETE);
@@ -46,15 +49,18 @@ int pluginManager::load(const char* dir){
   return 0;
 }
 
-int pluginManager::load(std::string dir){
+template<class T>
+int pluginManager<T>::load(std::string dir){
   return this->load(dir.c_str());
 }
 
-int pluginManager::loadall(const char* dir){
+template<class T>
+int pluginManager<T>::loadall(const char* dir){
   return this->loadAll(std::string(dir));
 }
 
-int pluginManager::loadAll(std::string dir){
+template<class T>
+int pluginManager<T>::loadAll(std::string dir){
   std::vector<std::string>* files = fileManager::getFiles(dir);
   int count = 0;
 
@@ -64,7 +70,8 @@ int pluginManager::loadAll(std::string dir){
   return count;
 }
 
-int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
+template<class T>
+int pluginManager<T>::registerObject(const byte_t* name, const registerParams* rp){
   if(this->services.version.minor != rp->version.minor){
     return -1;
   }
@@ -72,9 +79,10 @@ int pluginManager::registerObject(const byte_t* name, const registerParams* rp){
   return 0;
 }
 
-void* pluginManager::createObject(const byte_t* name){
-  const registerParams* rp = pluginManager::objMap[(const char*)name];
+template<class T>
+T* pluginManager<T>::createObject(const byte_t* name){
+  const registerParams* rp = pluginManager<T>::objMap[(const char*)name];
   create_t cr = (create_t)rp->create;
-  return cr();
+  return (T*)cr();
 }
 

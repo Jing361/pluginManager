@@ -30,7 +30,7 @@ void initFunc(const platformServices* services){
 
 greetPlugin::greetPlugin(){  }
 
-greetPlugin::greetPlugin(pluginManager& pm){  }
+greetPlugin::greetPlugin(pluginManager<actor>& pm){  }
 
 greetPlugin::~greetPlugin(){  }
 

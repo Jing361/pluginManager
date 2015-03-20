@@ -30,7 +30,7 @@ void initFunc(const platformServices* services){
 
 stuffPlugin::stuffPlugin(){  }
 
-stuffPlugin::stuffPlugin(pluginManager& pm){  }
+stuffPlugin::stuffPlugin(pluginManager<actor>& pm){  }
 
 stuffPlugin::~stuffPlugin(){  }
 

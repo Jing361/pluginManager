@@ -4,7 +4,8 @@
 #include<functional>
 #include"plugin.hh"
 
-class plugin;
+//template<class T>
+//class plugin;
 
 //TODO:come up with prefix to use with all these types
 //       to make it clearer they come from this framework

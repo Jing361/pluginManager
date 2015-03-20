@@ -10,8 +10,6 @@ int main(int argc, char** argv){
   actor* actr3;
   actor* actr4;
 
-//  pm.load("stuff/libGreetPlugin.so");
-//  pm.load("stuff/libStuffPlugin.so");
   pm.loadAll("stuff/");
 
   actr1 = (actor*)pm.createObject((const byte_t*)"killerBunny");

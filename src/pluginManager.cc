@@ -1,12 +1,11 @@
 #include<string>
 #include<iostream>
-//#include"pluginManager.hh"
 #include"fileManager.hh"
 
 template<class T>
 pluginManager<T>::pluginManager(){
-  this->services.version.major = 0;
-  this->services.version.minor = 2;
+  this->services.version.major = 1;
+  this->services.version.minor = 0;
   this->services.version.maint = 0;
   this->services.registerObject = [this] (const byte_t* name, const registerParams* rp)->int { return this->registerObject(name, rp); };
 }
@@ -20,11 +19,9 @@ pluginManager<T>::~pluginManager(){
 
 template<class T>
 int pluginManager<T>::load(const char* dir){
-  //TODO:check existence of path and file.
   //TODO:should use rtld_nodelete if libc is ever updated
   //void* handle = dlopen(dir, RTLD_NODELETE);
   //TODO:Need to call dlclose appropriately.
-  //until then dlclose must be done somewhere else.
   //If dlclose called in this call, program dumps.
   char* error;
   void* handle = dlopen(dir, RTLD_LAZY);
@@ -44,7 +41,6 @@ int pluginManager<T>::load(const char* dir){
 
   init(&(this->services));
 
-  //It is possible we want to close the handle later on around manager destruction
   //dlclose(handle);
   return 0;
 }

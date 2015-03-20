@@ -11,9 +11,6 @@ default:main
 libPluginManager.a:fileManager.o
 	ar -cvq libPluginManager.a fileManager.o
 	
-#pluginManager.o:pluginManager.cc
-#	$(CC) $(cflags) $(flags) pluginManager.cc
-
 fileManager.o:fileManager.cc
 	$(CC) $(cflags) $(flags) fileManager.cc
 
@@ -50,7 +47,6 @@ stuff.o:stuff.cc
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
 main:main.o stuff/libGreetPlugin.so stuff/libStuffPlugin.so libPluginManager.a
 	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) main.o libPluginManager.a -o $(name) -ldl
-#$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -ldl
 
 main.o:main.cc
 	$(CC) $(cflags) $(flags) main.cc

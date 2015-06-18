@@ -12,17 +12,16 @@ pluginManager<T>::pluginManager(){
 
 template<class T>
 pluginManager<T>::~pluginManager(){
-//  for(auto iter = this->handles.begin(); iter != this->handles.end(); ++iter){
-//    dlclose(*iter);
-//  }
+  for(auto it = this->handles.begin(); it != this->handles.end(); ++it){
+    dlclose(*it);
+  }
 }
 
 template<class T>
 int pluginManager<T>::load(const char* dir){
-  //TODO:should use rtld_nodelete if libc is ever updated
+  //TODO:should use RTLD_NODELETE if libc is ever updated
+  //Until then, using RTLD_LAZY
   //void* handle = dlopen(dir, RTLD_NODELETE);
-  //TODO:Need to call dlclose appropriately.
-  //If dlclose called in this call, program dumps.
   char* error;
   void* handle = dlopen(dir, RTLD_LAZY);
 
@@ -41,6 +40,7 @@ int pluginManager<T>::load(const char* dir){
 
   init(&(this->services));
 
+  handles.push_back(handle);
   //dlclose(handle);
   return 0;
 }

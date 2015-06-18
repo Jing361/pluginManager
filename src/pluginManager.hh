@@ -12,6 +12,8 @@ class pluginManager{
 private:
   platformServices services;
   std::map<std::string, const registerParams*> objMap;
+  std::vector<void*> handles;
+
 public:
   pluginManager();
   virtual ~pluginManager();

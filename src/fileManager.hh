@@ -3,7 +3,7 @@
 
 class fileManager{
 public:
-  static std::vector<std::string>* getFiles(std::string dir);
+  static std::vector<std::string> getFiles(std::string dir);
 };
 
 #endif

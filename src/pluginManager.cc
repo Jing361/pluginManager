@@ -41,7 +41,6 @@ int pluginManager<T>::load(const char* dir){
   init(&(this->services));
 
   handles.push_back(handle);
-  //dlclose(handle);
   return 0;
 }
 
@@ -57,10 +56,10 @@ int pluginManager<T>::loadall(const char* dir){
 
 template<class T>
 int pluginManager<T>::loadAll(std::string dir){
-  std::vector<std::string>* files = fileManager::getFiles(dir);
+  std::vector<std::string> files = fileManager::getFiles(dir);
   int count = 0;
 
-  for(auto it = files->begin(); it != files->end(); ++it){
+  for(auto it = files.begin(); it != files.end(); ++it){
     count += this->load(dir + *it);
   }
   return count;

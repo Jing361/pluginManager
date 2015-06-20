@@ -45,11 +45,11 @@ stuff.o:stuff.cc
 #$(CC) -L. main.o -o $(name) -lHelloPlugin
 #or use rpath as:
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
-main:main.o stuff/libGreetPlugin.so stuff/libStuffPlugin.so libPluginManager.a
-	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) main.o libPluginManager.a -o $(name) -ldl
+$(name):$(name).o stuff/libGreetPlugin.so stuff/libStuffPlugin.so libPluginManager.a pluginManager.cc
+	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) $(name).o libPluginManager.a -o $(name) -ldl
 
-main.o:main.cc
-	$(CC) $(cflags) $(flags) main.cc
+$(name).o:$(name).cc
+	$(CC) $(cflags) $(flags) $(name).cc
 
 grind:$(name)
 	valgrind --track-origins=yes --leak-check=yes ./$(name)

@@ -4,6 +4,7 @@
 #include<map>
 #include<vector>
 #include<iostream>
+#include<string>
 #include<dlfcn.h>
 #include"pmDefs.hh"
 
@@ -12,6 +13,7 @@ class pluginManager{
 private:
   platformServices services;
   std::map<std::string, const registerParams*> objMap;
+  std::vector<std::string> names;
   std::vector<void*> handles;
 
 public:
@@ -23,6 +25,7 @@ public:
   int loadAll(std::string dir);
   T* createObject(const byte_t* name);
   int registerObject(const byte_t* name, const registerParams* rp);
+  std::vector<std::string> getNames();
 };
 
 #include"pluginManager.cc"

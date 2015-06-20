@@ -71,6 +71,7 @@ int pluginManager<T>::registerObject(const byte_t* name, const registerParams* r
     return -1;
   }
   this->objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
+  this->names.push_back(std::string((const char*)name));
   return 0;
 }
 
@@ -79,5 +80,10 @@ T* pluginManager<T>::createObject(const byte_t* name){
   const registerParams* rp = pluginManager<T>::objMap[(const char*)name];
   create_t cr = (create_t)rp->create;
   return (T*)cr();
+}
+
+template<class T>
+std::vector<std::string> pluginManager<T>::getNames(){
+  return this->names;
 }
 

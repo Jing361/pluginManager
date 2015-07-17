@@ -3,7 +3,7 @@
 #include"pluginManager.hh"
 #include"actor.hh"
 
-int main(int argc, char** argv){
+int main(){
   pluginManager<actor> pm;
   actor* actr1;
   actor* actr2;

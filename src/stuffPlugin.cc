@@ -1,12 +1,14 @@
-#include"pmDefs.hh"
 #include"thing.hh"
 #include"stuff.hh"
+#include"pluginManager.hh"
+
+template class pluginManager<actor>;
 
 extern "C"{
 
-void initFunc(const platformServices* services){
-  registerParams* bunnyRP = new registerParams;
-  registerParams* lgmRP = new registerParams;
+void initFunc(const pluginManager<actor>::platformServices* services){
+  pluginManager<actor>::registerParams* bunnyRP = new pluginManager<actor>::registerParams;
+  pluginManager<actor>::registerParams* lgmRP = new pluginManager<actor>::registerParams;
 
   bunnyRP->version.major = 1;
   bunnyRP->version.minor = 0;
@@ -20,9 +22,9 @@ void initFunc(const platformServices* services){
   lgmRP->create = &stuff::create;
   lgmRP->destroy = &stuff::destroy;
 
-  services->registerObject((const byte_t*)"things", bunnyRP);
+  services->registerObject((const pluginManager<actor>::byte_t*)"things", bunnyRP);
 
-  services->registerObject((const byte_t*)"stuffs", lgmRP);
+  services->registerObject((const pluginManager<actor>::byte_t*)"stuffs", lgmRP);
 }
 
 }

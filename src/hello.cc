@@ -1,11 +1,11 @@
 #include<iostream>
 #include"hello.hh"
 
-void* hello::create(){
+actor* hello::create(){
   return new hello;
 }
 
-void hello::destroy(void* obj){
+void hello::destroy(actor* obj){
   if(obj){
     delete (hello*)obj;
   }

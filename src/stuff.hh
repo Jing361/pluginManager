@@ -6,8 +6,8 @@
 class stuff:public actor{
 public:
   virtual ~stuff(){  }
-  static void* create();
-  static void destroy(void* obj);
+  static actor* create();
+  static void destroy(actor* obj);
   void run();
 };
 

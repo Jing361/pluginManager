@@ -1,11 +1,11 @@
 #include<iostream>
 #include"thing.hh"
 
-void* thing::create(){
+actor* thing::create(){
   return new thing;
 }
 
-void thing::destroy(void* obj){
+void thing::destroy(actor* obj){
   if(obj){
     delete (thing*)obj;
   }

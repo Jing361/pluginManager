@@ -12,10 +12,10 @@ int main(){
 
   pm.loadAll("stuff/");
 
-  actr1 = pm.createObject((const byte_t*)"killerBunny");
-  actr2 = pm.createObject((const byte_t*)"killerLGM");
-  actr3 = pm.createObject((const byte_t*)"things");
-  actr4 = pm.createObject((const byte_t*)"stuffs");
+  actr1 = pm.createObject((const pluginManager<actor>::byte_t*)"killerBunny");
+  actr2 = pm.createObject((const pluginManager<actor>::byte_t*)"killerLGM");
+  actr3 = pm.createObject((const pluginManager<actor>::byte_t*)"things");
+  actr4 = pm.createObject((const pluginManager<actor>::byte_t*)"stuffs");
 
   actr1->run();
   actr2->run();

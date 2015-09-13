@@ -6,8 +6,8 @@
 class bye:public actor{
 public:
   virtual ~bye(){  }
-  static void* create();
-  static void destroy(void* obj);
+  static actor* create();
+  static void destroy(actor* obj);
   void run();
 };
 

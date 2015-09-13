@@ -1,11 +1,11 @@
 #include<iostream>
 #include"bye.hh"
 
-void* bye::create(){
+actor* bye::create(){
   return new bye;
 }
 
-void bye::destroy(void* obj){
+void bye::destroy(actor* obj){
   if(obj){
     delete (bye*)obj;
   }

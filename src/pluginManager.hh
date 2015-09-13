@@ -10,6 +10,27 @@
 
 template<class T>
 class pluginManager{
+public:
+  typedef unsigned char byte_t;
+  typedef std::function<T*()> create_t;
+  typedef std::function<void(T*)> delete_t;
+  typedef std::function<char*()> name_t;
+  typedef struct{
+    unsigned int major;
+    unsigned int minor;
+    unsigned int maint;
+  }version_t;
+  typedef struct{
+    version_t version;
+    create_t create;
+    delete_t destroy;
+  }registerParams;
+  typedef std::function<int(const byte_t*, const registerParams*)> registerFunc;
+  typedef struct{
+    version_t version;
+    registerFunc registerObject;
+  }platformServices;
+
 private:
   platformServices services;
   std::map<std::string, const registerParams*> objMap;
@@ -18,29 +39,9 @@ private:
 
 public:
   typedef T type;
-  typedef unsigned char byte_t;
-  typedef std::function<T*()> create_t;
-  typedef std::function<void(T*)> delete_t;
-  typedef std::function<char*()> name_t;
-  //Provided by plugin to register object.
-  typedef struct{
-    version_t version;
-    create_t create;
-    delete_t destroy;
-  }registerParams;
   //Manager calls the initFunc of a plugin,
   //  from which the plugin registers objects.
   typedef void (*initFunc_t)(const platformServices*);
-  typedef struct{
-    version_t version;
-    registerFunc registerObject;
-  }platformServices;
-  typedef struct{
-    unsigned int major;
-    unsigned int minor;
-    unsigned int maint;
-  }version_t;
-  typedef std::function<int(const byte_t*, const registerParams*)> registerFunc;
 
   pluginManager();
   virtual ~pluginManager();

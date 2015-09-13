@@ -6,8 +6,8 @@
 class hello:public actor{
 public:
   virtual ~hello(){  }
-  static void* create();
-  static void destroy(void* obj);
+  static actor* create();
+  static void destroy(actor* obj);
   void run();
 };
 

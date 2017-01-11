@@ -4,7 +4,8 @@
 #include"actor.hh"
 
 int main(){
-  pluginManager<actor> pm;
+  typedef pluginManager<actor> mgr;
+  mgr pm;
   actor* actr1;
   actor* actr2;
   actor* actr3;
@@ -12,10 +13,10 @@ int main(){
 
   pm.loadAll("stuff/");
 
-  actr1 = pm.createObject((const pluginManager<actor>::byte_t*)"killerBunny");
-  actr2 = pm.createObject((const pluginManager<actor>::byte_t*)"killerLGM");
-  actr3 = pm.createObject((const pluginManager<actor>::byte_t*)"things");
-  actr4 = pm.createObject((const pluginManager<actor>::byte_t*)"stuffs");
+  actr1 = pm.createObject((const mgr::byte_t*)"killerBunny");
+  actr2 = pm.createObject((const mgr::byte_t*)"killerLGM");
+  actr3 = pm.createObject((const mgr::byte_t*)"things");
+  actr4 = pm.createObject((const mgr::byte_t*)"stuffs");
 
   actr1->run();
   actr2->run();

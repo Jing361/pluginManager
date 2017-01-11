@@ -3,7 +3,7 @@
 #include<dirent.h>
 #include"fileManager.hh"
 
-std::vector<std::string> fileManager::getFiles(std::string dir){
+std::vector<std::string> fileManager::getFiles(const std::string& dir){
   DIR *dp;
   struct dirent *dirp;
   std::string bad1(".");

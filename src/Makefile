@@ -1,5 +1,5 @@
 CC:=g++
-flags:=-Wall -Wextra -pedantic -std=c++11
+flags:=-Wall -Wextra -pedantic -std=c++14
 dflags:=-ggdb3
 cflags:=-c $(dflags)
 plugindir:=$(PWD)
@@ -14,8 +14,8 @@ libPluginManager.a:fileManager.o
 fileManager.o:fileManager.cc
 	$(CC) $(cflags) $(flags) fileManager.cc
 
-stuff/libGreetPlugin.so:greetPlugin.o hello.o bye.o
-	$(CC) -shared -o stuff/libGreetPlugin.so greetPlugin.o hello.o bye.o
+stuff/libGreetPlugin.so:greetPlugin.o hello.o bye.o fileManager.o
+	$(CC) -shared -o stuff/libGreetPlugin.so fileManager.o greetPlugin.o hello.o bye.o
 
 greetPlugin.o:greetPlugin.cc
 	$(CC) $(cflags) $(flags) -fPIC greetPlugin.cc
@@ -27,7 +27,7 @@ bye.o:bye.cc
 	$(CC) $(cflags) $(flags) -fPIC bye.cc
 
 stuff/libStuffPlugin.so:stuffPlugin.o thing.o stuff.o
-	$(CC) -shared -o stuff/libStuffPlugin.so stuffPlugin.o thing.o stuff.o
+	$(CC) -shared -o stuff/libStuffPlugin.so stuffPlugin.o thing.o stuff.o fileManager.o
 
 stuffPlugin.o:stuffPlugin.cc
 	$(CC) $(cflags) $(flags) -fPIC stuffPlugin.cc

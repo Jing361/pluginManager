@@ -6,9 +6,50 @@
 #include<string>
 #include<iostream>
 #include<functional>
+#include<exception>
 #include<dlfcn.h>
 
 #include"fileManager.hh"
+
+typedef struct{
+  unsigned int major;
+  unsigned int minor;
+  unsigned int maint;
+}version_t;
+
+
+class incompatibleVersionException : public std::exception{
+private:
+  std::string mMesg;
+
+public:
+  incompatibleVersionException( const version_t& requested, const version_t& actual ):
+    mMesg( "The requested version (" + std::to_string( requested.major ) + "." +
+                                       std::to_string( requested.minor ) + "." +
+                                       std::to_string( requested.maint ) + ") " +
+           "is not compatible with the system version (" + std::to_string( actual.major ) + "." +
+                                                           std::to_string( actual.minor ) + "." +
+                                                           std::to_string( actual.maint ) + ")." ){
+  }
+
+  virtual const char* what() const noexcept{
+    return mMesg.c_str();
+  }
+};
+
+class libraryException : public std::exception{
+private:
+  std::string mMesg;
+
+public:
+  libraryException( const std::string& message):
+    mMesg( message ){
+  }
+
+  virtual const char* what() const noexcept{
+    return mMesg.c_str();
+  }
+};
 
 template<class T>
 class pluginManager{
@@ -17,23 +58,20 @@ public:
   typedef value_type* pointer;
   typedef value_type& reference;
   typedef unsigned char byte_t;
+  typedef void* handle;
 
   typedef std::function<pointer()> create_t;
-  typedef std::function<void(pointer)> delete_t;
+  typedef std::function<void( pointer )> delete_t;
   typedef std::function<char*()> name_t;
 
-  typedef struct{
-    unsigned int major;
-    unsigned int minor;
-    unsigned int maint;
-  }version_t;
   typedef struct{
     version_t version;
     create_t create;
     delete_t destroy;
   }registerParams;
 
-  typedef std::function<int(const byte_t*, const registerParams*)> registerFunc;
+  typedef std::function<int( const byte_t*, const registerParams* )> registerFunc;
+
   typedef struct{
     version_t version;
     registerFunc registerObject;
@@ -41,86 +79,87 @@ public:
 
   //Manager calls the initFunc of a plugin,
   //  from which the plugin registers objects.
-  typedef void (*initFunc_t)(const platformServices*);
+  typedef void ( *initFunc_t )( const platformServices* );
 
 private:
-  platformServices services;
-  std::map<std::string, const registerParams*> objMap;
-  std::vector<std::string> names;
-  std::vector<void*> handles;
+  platformServices mServices;
+  std::map<std::string, const registerParams*> mObjMap;
+  std::vector<handle> mHandles;
 
 public:
   pluginManager():
-    services( { { 1, 0, 0 }, [this] (const byte_t* name, const registerParams* rp)->int {
-      return registerObject(name, rp);
+    mServices(  { { 1, 0, 0 }, [this]( const byte_t* name, const registerParams* rp )->int{
+      return registerObject( name, rp );
     } } ){
   }
 
   virtual ~pluginManager(){
-    for(auto it = handles.begin(); it != handles.end(); ++it){
-      dlclose(*it);
+    for( auto it = mHandles.begin(); it != mHandles.end(); ++it ){
+      dlclose( *it );
     }
   }
 
-  int load(const std::string& dir){
+  void load( const std::string& dir ){
     //TODO:should use RTLD_NODELETE if libc is ever updated
     //Until then, using RTLD_LAZY
-    //void* handle = dlopen(dir, RTLD_NODELETE);
+    //void* handle = dlopen( dir, RTLD_NODELETE );
     char* error;
-    void* handle = dlopen(dir.c_str(), RTLD_LAZY);
+    void* hndl = dlopen( dir.c_str(), RTLD_LAZY );
 
-    if(!handle){
-      std::cerr << "Failed to open " << dir << std::endl;
-      std::cerr << dlerror() << std::endl;
-
-      return -1;
+    if( !hndl ){
+      throw libraryException( "Failed to open " + std::string( dlerror() ) );
     }
 
-    initFunc_t init = (initFunc_t)dlsym(handle, "initFunc");
+    initFunc_t init = ( initFunc_t )dlsym( hndl, "initFunc" );
 
-    if((error = dlerror()) != 0){
-      std::cerr << "Couldn't find initFunc for " << dir << std::endl;
-      std::cerr << error << std::endl;
-
-      return -1;
+    if( ( error = dlerror() ) != 0 ){
+      throw libraryException( "Couldn't find initFunc for " + std::string( error ) );
     }
 
-    init(&(services));
+    init( &( mServices ) );
 
-    handles.push_back(handle);
-    return 0;
+    mHandles.push_back( hndl );
   }
 
-  int loadAll(const std::string& dir){
+  int loadAll( const std::string& dir ){
     int count = 0;
-    std::vector<std::string> files = fileManager::getFiles(dir);
+    std::vector<std::string> files = fileManager::getFiles( dir );
 
-    for(auto it : files){
-      count += load(dir + it);
+    for( auto it : files ){
+      try{
+        load( dir + it );
+        ++count;
+      }catch( std::exception& ){
+        //If it fails, don't count it, move along
+      }
     }
 
     return count;
   }
 
-  pointer createObject(const byte_t* name){
-    const registerParams* rp = pluginManager<T>::objMap[(const char*)name];
-    create_t cr = (create_t)rp->create;
+  pointer createObject( const byte_t* name ){
+    const registerParams* rp = mObjMap.at( ( const char* )name );
+    create_t cr = ( create_t )rp->create;
 
-    return (pointer)cr();
+    return ( pointer )cr();
   }
 
-  int registerObject(const byte_t* name, const registerParams* rp){
-    if(services.version.minor != rp->version.minor){
-      return -1;
+  int registerObject( const byte_t* name, const registerParams* rp ){
+    if( mServices.version.minor != rp->version.minor ){
+      throw incompatibleVersionException( rp->version, mServices.version );
     }
 
-    objMap.insert(std::pair<std::string, const registerParams*>(std::string((const char*)name), rp));
-    names.push_back(std::string((const char*)name));
+    mObjMap[( const char* )name] = rp;
+    //mObjMap.insert( std::pair<std::string, const registerParams*>( std::string( ( const char* )name ), rp ) );
 
     return 0;
   }
 
   std::vector<std::string> getNames(){
+    std::vector<std::string> names;
+    for( auto it : mObjMap ){
+      names.push_back( it.first );
+    }
     return names;
   }
 };

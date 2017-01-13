@@ -8,9 +8,6 @@ name:=main
 
 default:main
 
-libPluginManager.a:fileManager.o
-	ar -cvq libPluginManager.a fileManager.o
-	
 fileManager.o:fileManager.cc
 	$(CC) $(cflags) $(flags) fileManager.cc
 
@@ -45,8 +42,8 @@ stuff.o:stuff.cc
 #$(CC) -L. main.o -o $(name) -lHelloPlugin
 #or use rpath as:
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
-$(name):$(name).o stuff/libGreetPlugin.so stuff/libStuffPlugin.so libPluginManager.a pluginManager.cc
-	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) $(name).o libPluginManager.a -o $(name) -ldl
+$(name):$(name).o stuff/libGreetPlugin.so stuff/libStuffPlugin.so fileManager.o pluginManager.hh
+	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) $(name).o fileManager.o -o $(name) -ldl
 
 $(name).o:$(name).cc
 	$(CC) $(cflags) $(flags) $(name).cc

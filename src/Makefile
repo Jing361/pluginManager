@@ -1,5 +1,5 @@
 CC:=g++
-flags:=-Wall -Wextra -pedantic -std=c++14
+flags:=-Wall -Wextra -pedantic -std=c++17
 dflags:=-ggdb3
 cflags:=-c $(dflags)
 plugindir:=$(PWD)

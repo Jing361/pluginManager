@@ -1,7 +1,16 @@
 #include<iostream>
 #include<vector>
 #include<dirent.h>
+
 #include"fileManager.hh"
+
+directoryExistenceException::directoryExistenceException( const std::string& dir ):
+  mMesg( "Error opening " + dir + "." ){
+}
+
+const char* directoryExistenceException::what() const noexcept{
+  return mMesg.c_str();
+}
 
 std::vector<std::string> fileManager::getFiles( const std::string& dir ){
   DIR *dp;
@@ -10,9 +19,8 @@ std::vector<std::string> fileManager::getFiles( const std::string& dir ){
   std::string bad2( ".." );
   std::vector<std::string> files;
 
-  if( ( dp  = opendir( dir.c_str() ) ) == NULL ) {
-    std::cerr << "Error( " << errno << " ) opening " << dir << std::endl;
-    return files;
+  if( ( dp = opendir( dir.c_str() ) ) == NULL ) {
+    throw directoryExistenceException( dir );
   }
 
   while ( ( dirp = readdir( dp ) ) != NULL ) {

@@ -11,7 +11,7 @@ private:
 public:
   directoryExistenceException( const std::string& dir );
 
-  virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept override;
 };
 
 //TODO: update to use c++ 17 file system API

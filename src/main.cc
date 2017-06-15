@@ -11,10 +11,13 @@ int main(){
   typedef pluginManager<actor> mgr;
   mgr pm;
   vector<actor*> actors;
+  vector<string> names;
 
   pm.loadAll("stuff/");
 
-  for( auto name : pm.getNames() ){
+  pm.getNames( back_inserter( names ) );
+
+  for( auto name : names ){
     actors.push_back( pm.createObject( name ) );
   }
 

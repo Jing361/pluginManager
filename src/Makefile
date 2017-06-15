@@ -43,7 +43,7 @@ stuff.o:stuff.cc
 #or use rpath as:
 #$(CC) -L. -Wl,-rpath=$(PWD) main.o -o $(name) -lHelloPlugin
 $(name):$(name).o stuff/libGreetPlugin.so stuff/libStuffPlugin.so fileManager.o pluginManager.hh
-	$(CC) -L$(plugindir) -Wl,-rpath=$(plugindir) $(name).o fileManager.o -o $(name) -ldl
+	$(CC) -L$(plugindir) -Wl,-rpath=$$ORIGIN $(name).o fileManager.o -o $(name) -ldl
 
 $(name).o:$(name).cc
 	$(CC) $(cflags) $(flags) $(name).cc

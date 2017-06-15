@@ -70,7 +70,7 @@ public:
     delete_t destroy;
   }registerParams;
 
-  typedef std::function<int( const byte_t*, const registerParams* )> registerFunc;
+  typedef std::function<int( const std::string&, const registerParams* )> registerFunc;
 
   typedef struct{
     version_t version;
@@ -88,7 +88,7 @@ private:
 
 public:
   pluginManager():
-    mServices(  { { 1, 0, 0 }, [this]( const byte_t* name, const registerParams* rp )->int{
+    mServices(  { { 1, 0, 0 }, [this]( const std::string& name, const registerParams* rp )->int{
       return registerObject( name, rp );
     } } ){
   }
@@ -137,19 +137,19 @@ public:
     return count;
   }
 
-  pointer createObject( const byte_t* name ){
-    const registerParams* rp = mObjMap.at( ( const char* )name );
+  pointer createObject( const std::string& name ){
+    const registerParams* rp = mObjMap.at( name );
     create_t cr = ( create_t )rp->create;
 
     return ( pointer )cr();
   }
 
-  int registerObject( const byte_t* name, const registerParams* rp ){
+  int registerObject( const std::string& name, const registerParams* rp ){
     if( mServices.version.minor != rp->version.minor ){
       throw incompatibleVersionException( rp->version, mServices.version );
     }
 
-    mObjMap[( const char* )name] = rp;
+    mObjMap[name] = rp;
     //mObjMap.insert( std::pair<std::string, const registerParams*>( std::string( ( const char* )name ), rp ) );
 
     return 0;

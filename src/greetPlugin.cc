@@ -22,9 +22,9 @@ void initFunc(const pluginManager<actor>::platformServices* services){
   lgmRP->create = &bye::create;
   lgmRP->destroy = &bye::destroy;
 
-  services->registerObject((const pluginManager<actor>::byte_t*)"killerBunny", bunnyRP);
+  services->registerObject( "killerBunny", bunnyRP );
 
-  services->registerObject((const pluginManager<actor>::byte_t*)"killerLGM", lgmRP);
+  services->registerObject( "killerLGM", lgmRP );
 }
 
 }

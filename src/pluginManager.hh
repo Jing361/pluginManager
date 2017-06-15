@@ -70,7 +70,7 @@ public:
     delete_t destroy;
   }registerParams;
 
-  typedef std::function<int( const std::string&, const registerParams* )> registerFunc;
+  typedef std::function<int( const std::string&, const registerParams& )> registerFunc;
 
   typedef struct{
     version_t version;
@@ -79,32 +79,29 @@ public:
 
   //Manager calls the initFunc of a plugin,
   //  from which the plugin registers objects.
-  typedef void ( *initFunc_t )( const platformServices* );
+  typedef void ( *initFunc_t )( const platformServices& );
 
 private:
   platformServices mServices;
-  std::map<std::string, const registerParams*> mObjMap;
+  std::map<std::string, registerParams> mObjMap;
   std::vector<handle> mHandles;
 
 public:
   pluginManager():
-    mServices(  { { 1, 0, 0 }, [this]( const std::string& name, const registerParams* rp )->int{
+    mServices( { { 1, 0, 0 }, [this]( const std::string& name, const registerParams& rp )->int{
       return registerObject( name, rp );
     } } ){
   }
 
   virtual ~pluginManager(){
-    for( auto it = mHandles.begin(); it != mHandles.end(); ++it ){
-      dlclose( *it );
+    for( auto it : mHandles ){
+      dlclose( it );
     }
   }
 
   void load( const std::string& dir ){
-    //TODO:should use RTLD_NODELETE if libc is ever updated
-    //Until then, using RTLD_LAZY
-    //void* handle = dlopen( dir, RTLD_NODELETE );
     char* error;
-    void* hndl = dlopen( dir.c_str(), RTLD_LAZY );
+    void* hndl = dlopen( dir.c_str(), RTLD_NODELETE );
 
     if( !hndl ){
       throw libraryException( "Failed to open " + std::string( dlerror() ) );
@@ -116,7 +113,7 @@ public:
       throw libraryException( "Couldn't find initFunc for " + std::string( error ) );
     }
 
-    init( &( mServices ) );
+    init( mServices );
 
     mHandles.push_back( hndl );
   }
@@ -138,15 +135,15 @@ public:
   }
 
   pointer createObject( const std::string& name ){
-    const registerParams* rp = mObjMap.at( name );
-    create_t cr = ( create_t )rp->create;
+    const registerParams& rp = mObjMap.at( name );
+    create_t cr = rp.create;
 
     return ( pointer )cr();
   }
 
-  int registerObject( const std::string& name, const registerParams* rp ){
-    if( mServices.version.minor != rp->version.minor ){
-      throw incompatibleVersionException( rp->version, mServices.version );
+  int registerObject( const std::string& name, const registerParams& rp ){
+    if( mServices.version.minor != rp.version.minor ){
+      throw incompatibleVersionException( rp.version, mServices.version );
     }
 
     mObjMap[name] = rp;

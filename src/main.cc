@@ -15,7 +15,7 @@ int main(){
   pm.loadAll("stuff/");
 
   for( auto name : pm.getNames() ){
-    actors.push_back( pm.createObject( ( const mgr::byte_t* ) name.c_str() ) );
+    actors.push_back( pm.createObject( name ) );
   }
 
   for( auto actr : actors ){

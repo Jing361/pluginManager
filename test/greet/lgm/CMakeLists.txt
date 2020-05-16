@@ -1,0 +1,3 @@
+
+ADD_LIBRARY(LGM bye.cc bye.hh)
+TARGET_LINK_LIBRARIES(LGM Actor)

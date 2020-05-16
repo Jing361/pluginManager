@@ -2,7 +2,7 @@
 #include<vector>
 #include<dirent.h>
 
-#include"fileManager.hh"
+#include"../include/fileManager.hh"
 
 directoryExistenceException::directoryExistenceException( const std::string& dir ):
   mMesg( "Error opening " + dir + "." ){

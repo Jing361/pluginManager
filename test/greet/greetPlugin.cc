@@ -1,5 +1,5 @@
-#include"thing.hh"
-#include"stuff.hh"
+#include"bunny/hello.hh"
+#include"lgm/bye.hh"
 #include"pluginManager.hh"
 
 template class pluginManager<actor>;
@@ -13,18 +13,18 @@ void initFunc( const pluginManager<actor>::platformServices& services ){
   bunnyRP.version.major = 1;
   bunnyRP.version.minor = 0;
   bunnyRP.version.maint = 0;
-  bunnyRP.create  = &thing::create;
-  bunnyRP.destroy = &thing::destroy;
+  bunnyRP.create  = &hello::create;
+  bunnyRP.destroy = &hello::destroy;
 
   lgmRP.version.major = 1;
   lgmRP.version.minor = 0;
   lgmRP.version.maint = 0;
-  lgmRP.create  = &stuff::create;
-  lgmRP.destroy = &stuff::destroy;
+  lgmRP.create  = &bye::create;
+  lgmRP.destroy = &bye::destroy;
 
-  services.registerObject( "things", bunnyRP );
+  services.registerObject( "killerBunny", bunnyRP );
 
-  services.registerObject( "stuffs", lgmRP );
+  services.registerObject( "killerLGM", lgmRP );
 }
 
 }

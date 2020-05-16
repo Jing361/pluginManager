@@ -54,15 +54,15 @@ public:
 template<class T>
 class pluginManager{
 public:
-  typedef T value_type;
-  typedef value_type* pointer;
-  typedef value_type& reference;
-  typedef unsigned char byte_t;
-  typedef void* handle;
+  using value_type = T;
+  using pointer = value_type*;
+  using reference = value_type&;
+  using byte_t = unsigned char;
+  using handle = void*;
 
-  typedef std::function<pointer()> create_t;
-  typedef std::function<void( pointer )> delete_t;
-  typedef std::function<char*()> name_t;
+  using create_t = std::function<pointer()>;
+  using delete_t = std::function<void(pointer)>;
+  using name_t = std::function<char*()>;//! @todo probably just use std::string
 
   typedef struct{
     version_t version;
@@ -70,12 +70,12 @@ public:
     delete_t destroy;
   }registerParams;
 
-  typedef std::function<int( const std::string&, const registerParams& )> registerFunc;
+  using registerFunc = std::function<int(const std::string&, const registerParams&)>;
 
-  typedef struct{
+  struct platformServices{
     version_t version;
     registerFunc registerObject;
-  }platformServices;
+  };
 
   //Manager calls the initFunc of a plugin,
   //  from which the plugin registers objects.

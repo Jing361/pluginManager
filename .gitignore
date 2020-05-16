@@ -2,3 +2,5 @@
 *.a
 *.swp
 core
+cmake-build-*/*
+.idea/*

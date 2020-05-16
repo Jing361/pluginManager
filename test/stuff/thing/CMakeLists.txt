@@ -1,3 +1,3 @@
 
-ADD_LIBRARY(Thing thing.cc thing.hh)
+ADD_LIBRARY(Thing SHARED thing.cc thing.hh)
 TARGET_LINK_LIBRARIES(Thing Actor)

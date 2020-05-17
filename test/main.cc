@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int main(){
+int main() {
   typedef pluginManager<actor> mgr;
   mgr pm;
   vector<actor*> actors;
@@ -15,13 +15,13 @@ int main(){
 
   pm.loadAll("stuff/");
 
-  pm.getNames( back_inserter( names ) );
+  pm.getNames(back_inserter(names));
 
-  for( auto name : names ){
-    actors.push_back( pm.createObject( name ) );
+  for(auto name : names) {
+    actors.push_back(pm.createObject(name));
   }
 
-  for( auto actr : actors ){
+  for(auto actr : actors) {
     actr->run();
   }
 

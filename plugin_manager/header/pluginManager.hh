@@ -11,48 +11,47 @@
 
 #include"fileManager.hh"
 
-typedef struct{
+typedef struct {
   unsigned int major;
   unsigned int minor;
   unsigned int maint;
-}version_t;
+} version_t;
 
 
-class incompatibleVersionException : public std::exception{
+class incompatibleVersionException : public std::exception {
 private:
   std::string mMesg;
 
 public:
-  incompatibleVersionException( const version_t& requested, const version_t& actual ):
-    mMesg( "The requested version (" + std::to_string( requested.major ) + "." +
-                                       std::to_string( requested.minor ) + "." +
-                                       std::to_string( requested.maint ) + ") " +
-           "is not compatible with the system version (" + std::to_string( actual.major ) + "." +
-                                                           std::to_string( actual.minor ) + "." +
-                                                           std::to_string( actual.maint ) + ")." ){
+  incompatibleVersionException(const version_t& requested, const version_t& actual)
+          : mMesg(
+          "The requested version (" + std::to_string(requested.major) + "." + std::to_string(requested.minor) + "." +
+          std::to_string(requested.maint) + ") " + "is not compatible with the system version (" +
+          std::to_string(actual.major) + "." + std::to_string(actual.minor) + "." + std::to_string(actual.maint) +
+          ").") {
   }
 
-  virtual const char* what() const noexcept override{
+  virtual const char* what() const noexcept override {
     return mMesg.c_str();
   }
 };
 
-class libraryException : public std::exception{
+class libraryException : public std::exception {
 private:
   std::string mMesg;
 
 public:
-  libraryException( const std::string& message):
-    mMesg( message ){
+  libraryException(const std::string& message)
+          : mMesg(message) {
   }
 
-  virtual const char* what() const noexcept override{
+  virtual const char* what() const noexcept override {
     return mMesg.c_str();
   }
 };
 
 template<class T>
-class pluginManager{
+class pluginManager {
 public:
   using value_type = T;
   using pointer = value_type*;
@@ -64,22 +63,22 @@ public:
   using delete_t = std::function<void(pointer)>;
   using name_t = std::function<char*()>;//! @todo probably just use std::string
 
-  typedef struct{
+  typedef struct {
     version_t version;
     create_t create;
     delete_t destroy;
-  }registerParams;
+  } registerParams;
 
   using registerFunc = std::function<int(const std::string&, const registerParams&)>;
 
-  struct platformServices{
+  struct platformServices {
     version_t version;
     registerFunc registerObject;
   };
 
   //Manager calls the initFunc of a plugin,
   //  from which the plugin registers objects.
-  typedef void ( *initFunc_t )( const platformServices& );
+  typedef void ( * initFunc_t )(const platformServices&);
 
 private:
   platformServices mServices;
@@ -92,10 +91,11 @@ public:
    * Initializes platform services struct with version data, and registration
    * callback.
    */
-  pluginManager():
-    mServices( { { 1, 0, 0 }, [this]( const std::string& name, const registerParams& rp )->int{
-      return registerObject( name, rp );
-    } } ){
+  pluginManager()
+          : mServices({{ 1, 0, 0 }, [this](const std::string& name, const registerParams& rp) -> int
+    {
+      return registerObject(name, rp);
+    }}) {
   }
 
   /*! No copy ctor
@@ -103,7 +103,7 @@ public:
    * The copy ctor can't exist because it would put handles at risk of being
    * double closed/deleted.  This would of course cause a segfault.
    */
-  pluginManager( const pluginManager& ) = delete;
+  pluginManager(const pluginManager&) = delete;
 
   /*! Move ctor
    *
@@ -111,23 +111,23 @@ public:
    *
    * Move resources out of this instance.
    */
-  pluginManager( pluginManager&& pm ){
+  pluginManager(pluginManager&& pm) {
     mServices.version.major = 0;
     mServices.version.minor = 0;
     mServices.version.maint = 0;
 
     mServices = pm.mServices;
-    mObjMap  = std::move( pm.mObjMap );
-    mHandles = std::move( pm.mHandles );
+    mObjMap = std::move(pm.mObjMap);
+    mHandles = std::move(pm.mHandles);
   }
 
   /*! Dtor
    *
    * Close open library handles
    */
-  virtual ~pluginManager(){
-    for( auto it : mHandles ){
-      dlclose( it );
+  virtual ~pluginManager() {
+    for(auto it : mHandles) {
+      dlclose(it);
     }
   }
 
@@ -140,23 +140,23 @@ public:
    * load the library itself.  This loading includes registering object types
    * with the plugin manager.
    */
-  void load( const std::string& libName ){
+  void load(const std::string& libName) {
     char* error;
-    void* hndl = dlopen( libName.c_str(), RTLD_NODELETE );
+    void* hndl = dlopen(libName.c_str(), RTLD_NODELETE);
 
-    if( !hndl ){
-      throw libraryException( "Failed to open " + std::string( dlerror() ) );
+    if(!hndl) {
+      throw libraryException("Failed to open " + std::string(dlerror()));
     }
 
-    initFunc_t init = ( initFunc_t )dlsym( hndl, "initFunc" );
+    initFunc_t init = (initFunc_t) dlsym(hndl, "initFunc");
 
-    if( ( error = dlerror() ) != 0 ){
-      throw libraryException( "Couldn't find initFunc for " + std::string( error ) );
+    if((error = dlerror()) != 0) {
+      throw libraryException("Couldn't find initFunc for " + std::string(error));
     }
 
-    init( mServices );
+    init(mServices);
 
-    mHandles.push_back( hndl );
+    mHandles.push_back(hndl);
   }
 
   /*! Load all libraries in a given directory
@@ -165,15 +165,15 @@ public:
    *
    * Search directory dir for libraries to open, and load them individually.
    */
-  int loadAll( const std::string& dir ){
+  int loadAll(const std::string& dir) {
     int count = 0;
-    std::vector<std::string> files = fileManager::getFiles( dir );
+    std::vector<std::string> files = fileManager::getFiles(dir);
 
-    for( auto it : files ){
-      try{
-        load( dir + it );
+    for(auto it : files) {
+      try {
+        load(dir + it);
         ++count;
-      }catch( std::exception& ){
+      } catch(std::exception&) {
         //If it fails, don't count it, move along
       }
     }
@@ -188,11 +188,11 @@ public:
    * Using name, find an object to be created.  The instance is generated using
    * the registered function for the object of the given name.
    */
-  pointer createObject( const std::string& name ){
-    const registerParams& rp = mObjMap.at( name );
+  pointer createObject(const std::string& name) {
+    const registerParams& rp = mObjMap.at(name);
     create_t cr = rp.create;
 
-    return ( pointer )cr();
+    return (pointer) cr();
   }
 
   /*! Object registration callback
@@ -203,9 +203,9 @@ public:
    *
    * Registration point to tell the manager about a creatable object type.
    */
-  int registerObject( const std::string& name, const registerParams& rp ){
-    if( mServices.version.minor != rp.version.minor ){
-      throw incompatibleVersionException( rp.version, mServices.version );
+  int registerObject(const std::string& name, const registerParams& rp) {
+    if(mServices.version.minor != rp.version.minor) {
+      throw incompatibleVersionException(rp.version, mServices.version);
     }
 
     mObjMap[name] = rp;
@@ -222,8 +222,8 @@ public:
    * Adds object names through a given output iterator.
    */
   template<typename outputIter>
-  void getNames( outputIter start ){
-    for( auto it : mObjMap ){
+  void getNames(outputIter start) {
+    for(auto it : mObjMap) {
       *start = it.first;
       ++start;
     }

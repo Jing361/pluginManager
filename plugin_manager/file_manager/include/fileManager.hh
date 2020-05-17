@@ -4,20 +4,20 @@
 #include<string>
 #include<exception>
 
-class directoryExistenceException : public std::exception{
+class directoryExistenceException : public std::exception {
 private:
   std::string mMesg;
 
 public:
-  directoryExistenceException( const std::string& dir );
+  directoryExistenceException(const std::string& dir);
 
   virtual const char* what() const noexcept override;
 };
 
 //TODO: update to use c++ 17 file system API
-class fileManager{
+class fileManager {
 public:
-  static std::vector<std::string> getFiles( const std::string& dir );
+  static std::vector<std::string> getFiles(const std::string& dir);
 };
 
 #endif

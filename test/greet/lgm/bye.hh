@@ -3,11 +3,15 @@
 
 #include"actor.hh"
 
-class bye:public actor{
+class bye : public actor {
 public:
-  virtual ~bye(){  }
+  virtual ~bye() {
+  }
+
   static actor* create();
+
   static void destroy(actor* obj);
+
   void run();
 };
 

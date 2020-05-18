@@ -3,3 +3,7 @@ ADD_SUBDIRECTORY(lgm)
 
 ADD_LIBRARY(GreetPlugin SHARED greetPlugin.cc)
 TARGET_LINK_LIBRARIES(GreetPlugin PluginManager BUNNY LGM Actor)
+SET_TARGET_PROPERTIES(GreetPlugin PROPERTIES
+                      INTERFACE_CXX_STANDARD 20
+                      INTERFACE_CXX_STANDARD_REQUIRED YES
+                      INTERFACE_CXX_EXTENSIONS NO)

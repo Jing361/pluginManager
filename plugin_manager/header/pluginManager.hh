@@ -70,6 +70,7 @@ public:
   }
 };
 
+//! @todo change to use gsw::exception
 class libraryException : public std::exception {
 private:
   std::string mMesg;
@@ -91,33 +92,29 @@ public:
   using pointer = value_type*;
   using reference = value_type&;
   using byte_t = unsigned char;
-  using handle = void*;
+  using handle_t = void*;
 
-  using create_t = std::function<pointer()>;
+  using create_t = std::function<pointer(void)>;
   using delete_t = std::function<void(pointer)>;
-  using name_t = std::function<char*()>;//! @todo probably just use std::string
+  using name_t = std::function<std::string(void)>;
 
-  typedef struct {
+  struct registration_parameters {
     version_t version;
     create_t create;
     delete_t destroy;
-  } registerParams;
-
-  using registerFunc = std::function<int(const std::string&, const registerParams&)>;
-
-  struct platformServices {
-    version_t version;
-    registerFunc registerObject;
   };
 
-  //Manager calls the initFunc of a plugin,
-  //  from which the plugin registers objects.
-  typedef void ( * initFunc_t )(const platformServices&);
+  using registrar = std::function<int(const std::string&, const registration_parameters&)>;
+
+  struct platform_services {
+    version_t version;
+    registrar registerObject;
+  };
 
 private:
-  platformServices mServices;
-  std::map<std::string, registerParams> mObjMap;
-  std::vector<handle> mHandles;
+  platform_services mServices;
+  std::map<std::string, registration_parameters> mObjMap;
+  std::vector<handle_t> mHandles;
 
 public:
   /*! Default ctor
@@ -126,7 +123,7 @@ public:
    * callback.
    */
   pluginManager()
-          : mServices({{ 1, 0, 0 }, [this](const std::string& name, const registerParams& rp) -> int
+          : mServices({{ 1, 0, 0 }, [this](const std::string& name, const registration_parameters& rp) -> int
     {
       return registerObject(name, rp);
     }}) {
@@ -169,23 +166,28 @@ public:
    *
    * @param libName  Name of library to be loaded
    *
-   * Load a library, and save a handle to it.  This handle is used for closing
+   * Load a library, and save a handle_t to it.  This handle_t is used for closing
    * the library in the future.  Also an initialization function is called to
    * load the library itself.  This loading includes registering object types
    * with the plugin manager.
    */
   void load(const std::string& libName) {
-    char* error;
-    void* hndl = dlopen(libName.c_str(), RTLD_NODELETE);
+    typedef void (*init_ptr)(const platform_services&);
+
+    handle_t hndl = dlopen(libName.c_str(), RTLD_NODELETE);
 
     if(!hndl) {
       throw libraryException("Failed to open " + std::string(dlerror()));
     }
 
-    initFunc_t init = (initFunc_t) dlsym(hndl, "initFunc");
+    auto init = (init_ptr) dlsym(hndl, "initFunc");
 
-    if((error = dlerror()) != 0) {
+    if(const char* error = dlerror(); error != nullptr) {
       throw libraryException("Couldn't find initFunc for " + std::string(error));
+    }
+
+    if(init == nullptr){
+      throw libraryException("Invalid handle for initFunc symbol");
     }
 
     init(mServices);
@@ -223,7 +225,7 @@ public:
    * the registered function for the object of the given name.
    */
   pointer createObject(const std::string& name) {
-    const registerParams& rp = mObjMap.at(name);
+    const registration_parameters& rp = mObjMap.at(name);
     create_t cr = rp.create;
 
     return (pointer) cr();
@@ -237,8 +239,8 @@ public:
    *
    * Registration point to tell the manager about a creatable object type.
    */
-  int registerObject(const std::string& name, const registerParams& rp) {
-    if(mServices.version.minor != rp.version.minor) {
+  int registerObject(const std::string& name, const registration_parameters& rp) {
+    if(mServices.version.minor <= rp.version.minor) {
       throw incompatibleVersionException(rp.version, mServices.version);
     }
 

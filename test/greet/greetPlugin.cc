@@ -7,9 +7,9 @@ class pluginManager<actor>;
 
 extern "C" {
 
-void initFunc(const pluginManager<actor>::platformServices& services) {
-  pluginManager<actor>::registerParams bunnyRP;
-  pluginManager<actor>::registerParams lgmRP;
+void initFunc(const pluginManager<actor>::platform_services& services) {
+  pluginManager<actor>::registration_parameters bunnyRP;
+  pluginManager<actor>::registration_parameters lgmRP;
 
   bunnyRP.version.major = 1;
   bunnyRP.version.minor = 0;

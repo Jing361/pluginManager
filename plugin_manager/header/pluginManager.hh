@@ -11,13 +11,47 @@
 
 #include"fileManager.hh"
 
-typedef struct {
+struct version_t{
   unsigned int major;
   unsigned int minor;
   unsigned int maint;
-} version_t;
 
+#if __cpp_impl_three_way_comparison
+  auto operator<=>(const version_t&) const = default;
+#else
+  bool operator<(const version_t& other) const{
+    if(major < other.major) {
+      return true;
+    } else if(minor < other.minor){
+      return true;
+    } else {
+      return maint < other.maint;
+    }
+  }
 
+  bool operator==(const version_t& other) const{
+    return major == other.major and minor == other.minor and maint == other.maint;
+  }
+
+  bool operator!=(const version_t& other) const{
+    return !((*this) == other);
+  }
+
+  bool operator<=(const version_t& other) const{
+    return (*this) < other || (*this) == other;
+  }
+
+  bool operator>(const version_t& other) const{
+    return !((*this) <= other);
+  }
+
+  bool operator>=(const version_t& other) const{
+    return !((*this) < other);
+  }
+#endif
+};
+
+//! @todo change to use gsw::exception
 class incompatibleVersionException : public std::exception {
 private:
   std::string mMesg;
